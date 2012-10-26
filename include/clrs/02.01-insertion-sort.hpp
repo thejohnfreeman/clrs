@@ -1,5 +1,5 @@
-#ifndef INSERTION_SORT_02_01
-#define INSERTION_SORT_02_01
+#ifndef CLRS_02_01_INSERTION_SORT
+#define CLRS_02_01_INSERTION_SORT
 
 #include <cstring> // for size_t
 
