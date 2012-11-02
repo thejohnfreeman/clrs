@@ -1,9 +1,8 @@
 #include <clrs/02.01-insertion-sort.hpp>
 
-#include "common.hpp"
+#include "SortTest.hpp"
 
-int main() {
-  test_sort<int>(&clrs::insertion_sort<int>);
-  return 0;
+TEST_F(SortTest, InsertionSort) {
+  test(&clrs::insertion_sort<int>);
 }
 
