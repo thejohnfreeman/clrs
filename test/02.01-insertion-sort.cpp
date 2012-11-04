@@ -1,4 +1,4 @@
-#include <clrs/02.01-insertion-sort.hpp>
+#include <clrs/insertion_sort.hpp>
 
 #include "SortTest.hpp"
 

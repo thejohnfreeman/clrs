@@ -1,6 +1,15 @@
+include $(shell find build -name '*.make')
+
 .PHONY : all test clean
 
 all : $(OBJECTS)
+
+CXX := clang++
+
+CFLAGS += -I./include -g
+CFLAGS += -std=c++11
+CFLAGS += -stdlib=libc++ -U__STRICT_ANSI__
+LFLAGS += -stdlib=libc++ 
 
 SOURCES :=
 
@@ -8,7 +17,8 @@ OBJECTS := $(SOURCES:%.cpp=/build/lib/%.o)
 
 build/lib/%.o : lib/%.cpp
 	@mkdir -p $(dir $@)
-	$(CXX) -I ./include -o $@ -c $<
+	$(CXX) $(CFLAGS) -o $@.make -MM $<
+	$(CXX) $(CFLAGS) -o $@ -c $<
 
 TESTS := \
 	02.01-insertion-sort \
@@ -19,22 +29,16 @@ TESTOBJECTS := $(TESTS:%=build/test/%.o)
 GTEST_SRCDIR := $(HOME)/work/googletest/source
 GTEST_LIBDIR := $(HOME)/work/googletest/build
 
-TESTCFLAGS := -I./include -I$(GTEST_SRCDIR)/include
+TESTCFLAGS := -I$(GTEST_SRCDIR)/include
 TESTLFLAGS := -L$(GTEST_LIBDIR) -lgtest -lgtest_main
-
-CXX := clang++
-
-CFLAGS := -std=c++11 -stdlib=libc++ -U__STRICT_ANSI__ -g
-LFLAGS := -stdlib=libc++ 
-#CFLAGS := -std=c++11 -g
-#LFLAGS :=
 
 bin/test : $(TESTOBJECTS) $(OBJECTS)
 	@mkdir -p $(dir $@)
 	$(CXX) $(LFLAGS) $(TESTLFLAGS) -o $@ $^
 
-build/test/%.o : test/%.cpp include/clrs/%.hpp
+build/test/%.o : test/%.cpp
 	@mkdir -p $(dir $@)
+	$(CXX) $(CFLAGS) $(TESTCFLAGS) -o $@.make -MM $<
 	$(CXX) $(CFLAGS) $(TESTCFLAGS) -o $@ -c $<
 
 test : bin/test

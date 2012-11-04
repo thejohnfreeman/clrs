@@ -1,4 +1,4 @@
-#include <clrs/02.02-merge-sort.hpp>
+#include <clrs/merge_sort.hpp>
 
 #include "SortTest.hpp"
 
