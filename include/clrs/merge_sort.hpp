@@ -4,6 +4,7 @@
 #include <vector>
 #include <cassert>
 #include <algorithm>
+#include <functional>
 
 namespace clrs {
 
@@ -13,8 +14,8 @@ namespace clrs {
    * p, q, r are indices into A such that, unlike CLRS, p < q < r. The two
    * sub-ranges are [p, q) and [q, r).
    */
-  template <typename T>
-  void merge(T* A, size_t p, size_t q, size_t r) {
+  template <typename T, typename Cmp>
+  void merge(T* A, size_t p, size_t q, size_t r, const Cmp& cmp) {
     //printf("merge: %lu < %lu < %lu\n", p, q, r);
     size_t nl = q - p;
     std::vector<T> L(A + p, A + q);
@@ -27,12 +28,13 @@ namespace clrs {
     size_t i = 0, j = 0, k = p;
     for (; k < r && i < nl && j < nr; ++k) {
       //printf("L[i] = %d <=? R[j] = %d\n", L[i], R[j]);
-      if (L[i] <= R[j]) {
-        //printf("A[%lu] = L[%lu] = %d\n", k, i, L[i]);
-        A[k] = L[i++];
-      } else {
+      /* Must compare this way to keep a stable sort. */
+      if (cmp(R[j], L[i])) {
         //printf("A[%lu] = R[%lu] = %d\n", k, j, R[j]);
         A[k] = R[j++];
+      } else {
+        //printf("A[%lu] = L[%lu] = %d\n", k, i, L[i]);
+        A[k] = L[i++];
       }
     }
 
@@ -43,18 +45,18 @@ namespace clrs {
     }
   }
 
-  template <typename T>
-  void merge_sort_(T* A, size_t p, size_t r) {
+  template <typename T, typename Cmp>
+  void merge_sort_(T* A, size_t p, size_t r, const Cmp& cmp) {
     if (r - p < 2) return;
     size_t q = (p + r) >> 1;
-    merge_sort_(A, p, q);
-    merge_sort_(A, q, r);
-    merge(A, p, q, r);
+    merge_sort_(A, p, q, cmp);
+    merge_sort_(A, q, r, cmp);
+    merge(A, p, q, r, cmp);
   }
 
-  template <typename T>
-  void merge_sort(T* A, size_t n) {
-    merge_sort_(A, 0, n);
+  template <typename T, typename Cmp = std::less<T>>
+  void merge_sort(T* A, size_t n, const Cmp& cmp = Cmp()) {
+    merge_sort_(A, 0, n, cmp);
   }
 
 }
