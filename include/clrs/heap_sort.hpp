@@ -47,6 +47,7 @@ namespace clrs {
 
   template <typename T, typename Cmp = std::less<T>>
   void heap_sort(T* A, size_t n, Cmp cmp = Cmp()) {
+    if (n < 2) return;
     make_heap(A, n, cmp);
     for (size_t i = n - 1; i > 0; --i) {
       std::swap(A[0], A[i]);

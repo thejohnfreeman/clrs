@@ -3,7 +3,6 @@
 
 #include <functional>
 #include <utility>
-#include <cstdio>
 
 namespace clrs {
 
@@ -27,9 +26,9 @@ namespace clrs {
   {
     if (!(p < r)) return;
 
-    size_t q = partition(A, p, r);
-    quick_sort_range(A, p, q);
-    quick_sort_range(A, q + 1, r);
+    size_t q = partition(A, p, r, cmp);
+    quick_sort_range(A, p, q, cmp);
+    quick_sort_range(A, q + 1, r, cmp);
   }
 
   template <typename T, typename Cmp = std::less<T>>
