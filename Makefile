@@ -25,7 +25,9 @@ TESTS := \
 	02.01-insertion-sort \
 	02.02-merge-sort \
 	06.03-make-heap \
-	06.04-heap-sort
+	06.04-heap-sort \
+	07.01-partition \
+	07.01-quick-sort
 
 TESTOBJECTS := $(TESTS:%=build/test/%.o)
 
