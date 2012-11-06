@@ -7,12 +7,14 @@
 #include <algorithm>
 #include <random>
 
-struct SortTest : public ::testing::Test {
+#include "ArrayTest.hpp"
 
-  template <typename T = int, typename F, typename Cmp = std::less<T>>
-  void test(const F& sort, size_t n = 10000, const Cmp& cmp = Cmp()) {
-    std::vector<T> A((n));
-    std::generate_n(A.data(), n, std::minstd_rand());
+struct SortTest : public ArrayTest {
+
+  template <typename T = int, typename F, typename Cmp = std::less<T>,
+            typename Gen = std::minstd_rand>
+  void test(F sort, size_t n = 10000, Cmp cmp = Cmp(), Gen gen = Gen()) {
+    std::vector<T> A(sample(n, gen));
     sort(A.data(), n, cmp);
     ASSERT_TRUE(std::is_sorted(A.begin(), A.end()));
   }

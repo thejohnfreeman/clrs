@@ -7,7 +7,7 @@
 namespace clrs {
 
   template <typename T, typename Cmp = std::less<T>>
-  void insertion_sort(T* A, size_t n, const Cmp& cmp = Cmp()) {
+  void insertion_sort(T* A, const size_t n, Cmp cmp = Cmp()) {
     for (size_t j = 1; j < n; ++j) {
       T& key = A[j];
       // Insert `A[j]` into the sorted sequence `A[1..j-1]`.

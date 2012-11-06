@@ -15,7 +15,7 @@ namespace clrs {
    * sub-ranges are [p, q) and [q, r).
    */
   template <typename T, typename Cmp>
-  void merge(T* A, size_t p, size_t q, size_t r, const Cmp& cmp) {
+  void merge(T* A, const size_t p, const size_t q, const size_t r, Cmp cmp) {
     //printf("merge: %lu < %lu < %lu\n", p, q, r);
     size_t nl = q - p;
     std::vector<T> L(A + p, A + q);
@@ -46,7 +46,7 @@ namespace clrs {
   }
 
   template <typename T, typename Cmp>
-  void merge_sort_(T* A, size_t p, size_t r, const Cmp& cmp) {
+  void merge_sort_(T* A, const size_t p, const size_t r, Cmp cmp) {
     if (r - p < 2) return;
     size_t q = (p + r) >> 1;
     merge_sort_(A, p, q, cmp);
@@ -55,7 +55,7 @@ namespace clrs {
   }
 
   template <typename T, typename Cmp = std::less<T>>
-  void merge_sort(T* A, size_t n, const Cmp& cmp = Cmp()) {
+  void merge_sort(T* A, const size_t n, Cmp cmp = Cmp()) {
     merge_sort_(A, 0, n, cmp);
   }
 
