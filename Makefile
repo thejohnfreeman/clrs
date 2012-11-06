@@ -42,11 +42,11 @@ bin/test : $(TESTOBJECTS) $(OBJECTS)
 build/test/%.o : test/%.cpp
 	@mkdir -p $(dir $@)
 	@DEP=$@.make; \
-			$(CXX) $(CFLAGS) $(TESTCFLAGS) -o $$DEP -MM $<; \
-			cat $$DEP | sed -e 's#[^[:space:]]*[[:space:]]*:#$@ :#' \
-				-e 's#/usr[^[:space:]]*##g' \
-				-e '#^[:space:]*\\$$#d' \
-				> $$DEP.tmp && mv $$DEP.tmp $$DEP
+	  $(CXX) $(CFLAGS) $(TESTCFLAGS) -o $$DEP -MM $<; \
+	  cat $$DEP | sed -e 's#[^[:space:]]*[[:space:]]*:#$@ :#' \
+	    -e 's#/usr[^[:space:]]*##g' \
+	    -e '#^[:space:]*\\$$#d' \
+	    > $$DEP.tmp && mv $$DEP.tmp $$DEP
 	$(CXX) $(CFLAGS) $(TESTCFLAGS) -o $@ -c $<
 
 test : bin/test
