@@ -92,18 +92,18 @@ namespace clrs {
 
     void push(const T& value) {
       c.push_back(value);
-      push_heap(c.begin(), c.size(), comp);
+      push_heap(c.data(), c.size(), comp);
     }
 
     void push(T&& value) {
       c.push_back(std::move(value));
-      push_heap(c.begin(), c.size(), comp);
+      push_heap(c.data(), c.size(), comp);
     }
 
     template <typename... Args>
     void emplace(Args&&... args) {
       c.emplace_back(std::forward<Args>(args)...);
-      push_heap(c.begin(), c.size(), comp);
+      push_heap(c.data(), c.size(), comp);
     }
 
     void swap(priority_queue<T, Container, Compare>& other) {
