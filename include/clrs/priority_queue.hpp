@@ -1,7 +1,8 @@
-#ifndef CLRS_06_01_HEAP_SORT
-#define CLRS_06_01_HEAP_SORT
+#ifndef CLRS_06_05_PRIORITY_QUEUE
+#define CLRS_06_05_PRIORITY_QUEUE
 
 #include <functional>
+#include <vector>
 #include <utility>
 #include <cassert>
 #include <cstdio>
@@ -31,7 +32,7 @@ namespace clrs {
 
   template <typename T, typename Cmp = std::less<T>>
   void demote(T* A, size_t n, size_t i, const T& key, Cmp cmp = Cmp()) {
-    assert(key, cmp(A[i]));
+    assert(cmp(key, A[i]));
     A[i] = key;
     heap_settle(A, n, i, cmp);
   }
@@ -48,20 +49,20 @@ namespace clrs {
 
   public:
 
-    typedef Container                  container_type;
-    typedef Container::value_type      value_type;
-    typedef Container::size_type       size_type;
-    typedef Container::reference       reference;
-    typedef Container::const_reference const_reference;
+    typedef Container                           container_type;
+    typedef typename Container::value_type      value_type;
+    typedef typename Container::size_type       size_type;
+    typedef typename Container::reference       reference;
+    typedef typename Container::const_reference const_reference;
 
-    priority_queue(const Compare& comp, const Container& c) :
-      comp(comp), c(c) {
+    priority_queue(const Compare& _comp, const Container& _c) :
+      comp(_comp), c(_c) {
         make_heap(c.data(), c.size(), comp);
       }
 
-    explicit priority_queue(const Compare& comp = Compare(),
-        Container&& c = Container()) :
-      comp(std::move(comp)), c(std::move(c)) {
+    explicit priority_queue(const Compare& _comp = Compare(),
+        Container&& _c = Container()) :
+      comp(std::move(_comp)), c(std::move(_c)) {
         make_heap(c.data(), c.size(), comp);
       }
 
@@ -73,8 +74,8 @@ namespace clrs {
 
     template <typename InputIt>
     priority_queue(InputIt first, InputIt last,
-        const Compare& comp = Compare())
-      comp(comp), c(first, last) {
+        const Compare& _comp = Compare()) :
+      comp(_comp), c(first, last) {
         make_heap(c.data(), c.size(), comp);
       }
 
@@ -82,6 +83,12 @@ namespace clrs {
 
     bool empty() const { return c.empty(); }
     bool size()  const { return c.size(); }
+
+    void pop() {
+      c.front() = c.back();
+      c.resize(c.size() - 1);
+      heap_settle(c.data(), c.size(), 0, comp);
+    }
 
     void push(const T& value) {
       c.push_back(value);
@@ -112,8 +119,8 @@ namespace clrs {
 namespace std {
 
   template <typename T, typename Container, typename Compare>
-  void swap(priority_queue<T, Container, Compare>& lhs,
-      priority_queue<T, Container, Compare>& rhs)
+  void swap(clrs::priority_queue<T, Container, Compare>& lhs,
+      clrs::priority_queue<T, Container, Compare>& rhs)
   {
     lhs.swap(rhs);
   }
