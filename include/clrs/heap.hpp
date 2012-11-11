@@ -53,7 +53,7 @@ namespace clrs {
   /* Mutators. */
 
   template <typename T, typename Cmp = std::less<T>>
-  void push_heap(T* A, size_t n, Cmp cmp = Cmp()) {
+  void heap_push(T* A, size_t n, Cmp cmp = Cmp()) {
     namespace d = heap_sort_detail;
     size_t i = n - 1;
     size_t p = d::parent(i);
@@ -64,12 +64,19 @@ namespace clrs {
     }
   }
 
+  /* Solution to exercise 6.5-7. */
+  template <typename T, typename Cmp = std::less<T>>
+  void heap_delete(T* A, size_t n, size_t i, Cmp cmp = Cmp()) {
+    A[i] = A[n - 1];
+    heap_settle(A, n - 1, i, cmp);
+  }
+
   template <typename T, typename Cmp = std::less<T>>
   void heap_promote(T* A, size_t n, size_t i, const T& key, Cmp cmp = Cmp())
   {
     assert(cmp(A[i], key));
     A[i] = key;
-    push_heap(A, i + 1, cmp);
+    heap_push(A, i + 1, cmp);
   }
 
   template <typename T, typename Cmp = std::less<T>>
