@@ -13,9 +13,7 @@ namespace clrs {
     if (n < 2) return;
     make_heap(A, n, cmp);
     for (size_t i = n - 1; i > 0; --i) {
-      std::swap(A[0], A[i]);
-      --n;
-      heap_settle(A, n, 0, cmp);
+      pop_heap(A, n--, cmp);
     }
   }
 
