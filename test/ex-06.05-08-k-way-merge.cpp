@@ -28,5 +28,7 @@ TEST_F(ArrayTest, KWayMerge) {
   std::vector<T> o(4 * n, 0);
 
   clrs::k_way_merge(As, ns, /*k=*/4, o.data(), cmp);
+
+  ASSERT_TRUE(std::is_sorted(o.begin(), o.end()));
 }
 
