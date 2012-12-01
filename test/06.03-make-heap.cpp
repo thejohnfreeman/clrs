@@ -11,17 +11,17 @@ TEST_F(ArrayTest, MakeHeap) {
   std::less<T> cmp;
 
   auto A(sample<T>(n));
-  clrs::make_heap(A.data(), n, cmp);
+  clrs::make_heap(A.begin(), n, cmp);
   ASSERT_EQ(n, A.size());
   ASSERT_TRUE(std::is_heap(A.begin(), A.end(), cmp)) <<
     take(10, A);
 
   size_t i = n >> 1;
-  clrs::heap_promote(A.data(), n, i, A[i] + 1, cmp);
+  clrs::heap_promote(A.begin(), n, i, A[i] + 1, cmp);
   ASSERT_TRUE(std::is_heap(A.begin(), A.end(), cmp)) <<
     "heap_promote";
 
-  clrs::heap_demote(A.data(), n, i, A[i] - 1, cmp);
+  clrs::heap_demote(A.begin(), n, i, A[i] - 1, cmp);
   ASSERT_TRUE(std::is_heap(A.begin(), A.end(), cmp)) <<
     "heap_demote";
 }
