@@ -6,34 +6,36 @@
 
 namespace clrs {
 
-  template <typename T, typename Cmp = std::less<T>>
-  size_t partition(T* A, const size_t p, const size_t r, Cmp cmp = Cmp()) {
-    const T& pivot = A[p];
-    size_t i = p;
-    for (size_t j = p + 1; j < r; ++j) {
-      if (cmp(A[j], pivot)) {
-        ++i;
-        std::swap(A[i], A[j]);
+  template <
+    typename RandomIt,
+    typename Compare
+      = std::less<typename std::iterator_traits<RandomIt>::value_type>>
+  RandomIt partition(RandomIt begin, RandomIt end, Compare comp = Compare())
+  {
+    const typename std::iterator_traits<RandomIt>::value_type& pivot
+      = *begin;
+    RandomIt i = begin;
+    for (RandomIt j = begin + 1; j != end; ++j) {
+      if (comp(*j, pivot)) {
+        std::iter_swap(++i, j);
       }
     }
-    std::swap(A[p], A[i]);
+    std::iter_swap(begin, i);
     return i;
   }
 
-  template <typename T, typename Cmp = std::less<T>>
-  void quick_sort_range(T* A, const size_t p, const size_t r,
-      Cmp cmp = Cmp())
+  template <
+    typename RandomIt,
+    typename Compare
+      = std::less<typename std::iterator_traits<RandomIt>::value_type>>
+  void quick_sort(RandomIt begin, RandomIt end,
+      Compare comp = Compare())
   {
-    if (!(p < r)) return;
+    if (begin == end) return;
 
-    size_t q = partition(A, p, r, cmp);
-    quick_sort_range(A, p, q, cmp);
-    quick_sort_range(A, q + 1, r, cmp);
-  }
-
-  template <typename T, typename Cmp = std::less<T>>
-  void quick_sort(T* A, const size_t n, Cmp cmp = Cmp()) {
-    return quick_sort_range(A, 0, n, cmp);
+    RandomIt mid = clrs::partition(begin, end, comp);
+    quick_sort(begin, mid, comp);
+    quick_sort(mid + 1, end, comp);
   }
 
 }

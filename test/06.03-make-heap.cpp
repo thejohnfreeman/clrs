@@ -11,7 +11,7 @@ TEST_F(ArrayTest, MakeHeap) {
   std::less<T> cmp;
 
   auto A(sample<T>(n));
-  clrs::make_heap(A.begin(), n, cmp);
+  clrs::make_heap(A.begin(), A.end(), cmp);
   ASSERT_EQ(n, A.size());
   ASSERT_TRUE(std::is_heap(A.begin(), A.end(), cmp)) <<
     take(10, A);

@@ -5,6 +5,7 @@
 #include <cassert>
 #include <algorithm>
 #include <functional>
+#include <utility>
 
 namespace clrs {
 
@@ -14,49 +15,50 @@ namespace clrs {
    * p, q, r are indices into A such that, unlike CLRS, p < q < r. The two
    * sub-ranges are [p, q) and [q, r).
    */
-  template <typename T, typename Cmp>
-  void merge(T* A, const size_t p, const size_t q, const size_t r, Cmp cmp) {
+  template <
+    typename RandomIt,
+    typename Compare
+      = std::less<typename std::iterator_traits<RandomIt>::value_type>>
+  void merge(RandomIt p, RandomIt q, RandomIt r, Compare comp) {
     //printf("merge: %lu < %lu < %lu\n", p, q, r);
-    size_t nl = q - p;
-    std::vector<T> L(A + p, A + q);
-    assert(L.size() == nl);
+    std::vector<typename std::iterator_traits<RandomIt>::value_type> L(p, q);
+    auto i = L.begin();
+    auto ii = L.end();
 
-    size_t nr = r - q;
-    std::vector<T> R(A + q, A + r);
-    assert(R.size() == nr);
+    // No need to copy right side.
+    auto j = q;
+    auto jj = r;
 
-    size_t i = 0, j = 0, k = p;
-    for (; k < r && i < nl && j < nr; ++k) {
+    auto k = p;
+    for (; k != r && i != ii && j != jj; ++k) {
       //printf("L[i] = %d <=? R[j] = %d\n", L[i], R[j]);
       /* Must compare this way to keep a stable sort. */
-      if (cmp(R[j], L[i])) {
+      if (comp(*j, *i)) {
         //printf("A[%lu] = R[%lu] = %d\n", k, j, R[j]);
-        A[k] = R[j++];
+        *k = std::move(*j++);
       } else {
         //printf("A[%lu] = L[%lu] = %d\n", k, i, L[i]);
-        A[k] = L[i++];
+        *k = std::move(*i++);
       }
     }
 
-    if (i < nl) {
-      std::copy(L.begin() + i, L.begin() + nl, A + k);
-    } else if (j < nr) {
-      std::copy(R.begin() + j, R.begin() + nr, A + k);
+    if (i != ii) {
+      std::move(i, ii, k);
+    } else if (j != jj) {
+      std::move(j, jj, k);
     }
   }
 
-  template <typename T, typename Cmp>
-  void merge_sort_(T* A, const size_t p, const size_t r, Cmp cmp) {
-    if (r - p < 2) return;
-    size_t q = (p + r) >> 1;
-    merge_sort_(A, p, q, cmp);
-    merge_sort_(A, q, r, cmp);
-    merge(A, p, q, r, cmp);
-  }
-
-  template <typename T, typename Cmp = std::less<T>>
-  void merge_sort(T* A, const size_t n, Cmp cmp = Cmp()) {
-    merge_sort_(A, 0, n, cmp);
+  template <
+    typename RandomIt,
+    typename Compare
+      = std::less<typename std::iterator_traits<RandomIt>::value_type>>
+  void merge_sort(RandomIt begin, RandomIt end, Compare comp) {
+    if ((end - begin) < 2) return;
+    RandomIt mid = begin + ((end - begin) >> 1);
+    merge_sort(begin, mid, comp);
+    merge_sort(mid, end, comp);
+    merge(begin, mid, end, comp);
   }
 
 }

@@ -2,8 +2,10 @@
 
 #include "SortTest.hpp"
 
+CLRS_DEFINE_SORTER_T(merge_sorter, clrs::merge_sort)
+
 TEST_F(SortTest, MergeSort) {
-  test(&clrs::merge_sort<int>);
+  test(merge_sorter());
 }
 
 

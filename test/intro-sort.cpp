@@ -2,8 +2,10 @@
 
 #include "SortTest.hpp"
 
+CLRS_DEFINE_SORTER_T(intro_sorter, clrs::intro_sort)
+
 TEST_F(SortTest, IntroSort) {
-  test(&clrs::intro_sort<int>);
+  test(intro_sorter());
 }
 
 

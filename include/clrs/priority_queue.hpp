@@ -31,13 +31,13 @@ namespace clrs {
 
     priority_queue(const Compare& _comp, const Container& _c) :
       comp(_comp), c(_c) {
-        make_heap(c.data(), c.size(), comp);
+        clrs::make_heap(c.begin(), c.end(), comp);
       }
 
     explicit priority_queue(const Compare& _comp = Compare(),
         Container&& _c = Container()) :
       comp(std::move(_comp)), c(std::move(_c)) {
-        make_heap(c.data(), c.size(), comp);
+        clrs::make_heap(c.begin(), c.end(), comp);
       }
 
     priority_queue(const priority_queue& other) :
@@ -50,7 +50,7 @@ namespace clrs {
     priority_queue(InputIt first, InputIt last,
         const Compare& _comp = Compare()) :
       comp(_comp), c(first, last) {
-        make_heap(c.data(), c.size(), comp);
+        clrs::make_heap(c.begin(), c.end(), comp);
       }
 
     const_reference top() const { return c.front(); }
@@ -60,24 +60,24 @@ namespace clrs {
 
     void pop() {
       assert(c.size() > 0);
-      heap_delete(c.data(), c.size(), 0, comp);
+      clrs::pop_heap(c.begin(), c.end(), comp);
       c.resize(c.size() - 1);
     }
 
     void push(const T& value) {
       c.push_back(value);
-      push_heap(c.data(), c.size(), comp);
+      clrs::push_heap(c.begin(), c.end(), comp);
     }
 
     void push(T&& value) {
       c.push_back(std::move(value));
-      push_heap(c.data(), c.size(), comp);
+      clrs::push_heap(c.begin(), c.end(), comp);
     }
 
     template <typename... Args>
     void emplace(Args&&... args) {
       c.emplace_back(std::forward<Args>(args)...);
-      push_heap(c.data(), c.size(), comp);
+      clrs::push_heap(c.begin(), c.end(), comp);
     }
 
     void swap(priority_queue<T, Container, Compare>& other) {

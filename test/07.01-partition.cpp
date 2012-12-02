@@ -8,12 +8,12 @@
 TEST_F(ArrayTest, Partition) {
   typedef int T;
   size_t n = 10000;
-  std::less<T> cmp;
+  std::less<T> comp;
 
   auto A(sample<T>(n));
-  size_t i = clrs::partition(A.data(), 0, n, cmp);
-  const T& pivot = A[i];
+  auto i = clrs::partition(A.begin(), A.end(), comp);
+  const T& pivot = *i;
   ASSERT_TRUE(std::is_partitioned(A.begin(), A.end(),
-        [&] (const T& x) { return cmp(x, pivot); }));
+        [&] (const T& x) { return comp(x, pivot); }));
 }
 

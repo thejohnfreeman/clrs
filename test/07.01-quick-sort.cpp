@@ -2,8 +2,10 @@
 
 #include "SortTest.hpp"
 
+CLRS_DEFINE_SORTER_T(quick_sorter, clrs::quick_sort)
+
 TEST_F(SortTest, QuickSort) {
-  test(&clrs::quick_sort<int>);
+  test(quick_sorter());
 }
 
 

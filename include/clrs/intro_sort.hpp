@@ -10,27 +10,31 @@
 
 namespace clrs {
 
-  template <typename T, typename Cmp = std::less<T>>
-  void intro_sort_range(T* A, const size_t threshold,
-      const size_t p, const size_t r,
-      Cmp cmp = Cmp())
+  template <
+    typename RandomIt,
+    typename Compare
+      = std::less<typename std::iterator_traits<RandomIt>::value_type>>
+  void intro_sort(RandomIt begin, RandomIt end, const size_t threshold,
+      Compare comp = Compare())
   {
-    assert(0 <= p);
-    assert(p < r);
+    assert(begin < end);
 
-    if ((r - p) < threshold) {
-      heap_sort(A + p, r - p, cmp);
+    if ((end - begin) < threshold) {
+      heap_sort(begin, end, comp);
     } else {
-      size_t q = partition(A, p, r, cmp);
-      intro_sort_range(A, threshold, p, q, cmp);
-      intro_sort_range(A, threshold, q + 1, r, cmp);
+      auto mid = clrs::partition(begin, end, comp);
+      intro_sort(begin, mid, threshold, comp);
+      intro_sort(mid + 1, end, threshold, comp);
     }
   }
 
-  template <typename T, typename Cmp = std::less<T>>
-  void intro_sort(T* A, const size_t n, Cmp cmp = Cmp()) {
-    size_t threshold = std::log(n) + 1;
-    return intro_sort_range(A, threshold, 0, n, cmp);
+  template <
+    typename RandomIt,
+    typename Compare
+      = std::less<typename std::iterator_traits<RandomIt>::value_type>>
+  void intro_sort(RandomIt begin, RandomIt end, Compare comp = Compare()) {
+    size_t threshold = std::log2(end - begin) + 1;
+    intro_sort(begin, end, threshold, comp);
   }
 
 }
