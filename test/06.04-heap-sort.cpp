@@ -3,7 +3,7 @@
 #include "SortTest.hpp"
 
 TEST_F(SortTest, HeapSort) {
-  test(&clrs::heap_sort<int>);
+  test(clrs::heap_sort<std::vector<int>::iterator>);
+  //test(clrs::heap_sort);
 }
-
 

@@ -6,14 +6,15 @@
 
 #include "heap.hpp"
 
+#define VAL_T typename std::iterator_traits<RandomIt>::value_type
+
 namespace clrs {
 
-  template <typename T, typename Cmp = std::less<T>>
-  void heap_sort(T* A, size_t n, Cmp cmp = Cmp()) {
-    if (n < 2) return;
-    make_heap(A, n, cmp);
-    for (size_t i = n - 1; i > 0; --i) {
-      pop_heap(A, n--, cmp);
+  template <typename RandomIt, typename Compare = std::less<VAL_T>>
+  void heap_sort(RandomIt begin, RandomIt end, Compare comp = Compare()) {
+    clrs::make_heap(begin, end, comp);
+    while (end != begin) {
+      clrs::pop_heap(begin, end--, comp);
     }
   }
 

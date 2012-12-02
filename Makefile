@@ -22,15 +22,8 @@ build/lib/%.o : lib/%.cpp
 	$(CXX) $(CFLAGS) -o $@ -c $<
 
 TESTS := \
-	02.01-insertion-sort \
-	02.02-merge-sort \
 	06.03-make-heap \
 	06.04-heap-sort \
-	06.05-priority-queue \
-	07.01-partition \
-	07.01-quick-sort \
-	ex-06.05-08-k-way-merge \
-	intro-sort
 
 TESTOBJECTS := $(TESTS:%=build/test/%.o)
 

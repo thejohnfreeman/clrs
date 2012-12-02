@@ -39,7 +39,7 @@ namespace clrs {
       largest = r;
     }
     if (largest != i) {
-      std::swap(A[i], A[largest]);
+      std::iter_swap(A + i, A + largest);
       heap_settle(A, n, largest, comp);
     }
   }
@@ -48,37 +48,52 @@ namespace clrs {
 
   template <typename RandomIt, typename Compare = std::less<VAL_T>>
   void make_heap(RandomIt A, const size_t n, Compare comp = Compare()) {
+    if (n < 2) return;
     for (size_t i = n >> 1; true; --i) {
       heap_settle(A, n, i, comp);
       if (i == 0) break;
     }
   }
 
+  template <typename RandomIt, typename Compare = std::less<VAL_T>>
+  void make_heap(RandomIt begin, RandomIt end, Compare comp = Compare()) {
+    return make_heap(begin, end - begin, comp);
+  }
+
   /* Mutators. */
 
+  /* Inserts the element at the position `end - 1` into the heap defined by
+   * the range `[begin, end - 1)`. */
   template <typename RandomIt, typename Compare = std::less<VAL_T>>
-  void push_heap(RandomIt A, size_t n, Compare comp = Compare()) {
+  void push_heap(RandomIt begin, RandomIt end, Compare comp = Compare()) {
     namespace d = heap_sort_detail;
-    size_t i = n - 1;
+    size_t i = (end - begin) - 1;
     size_t p = d::parent(i);
-    while (i > 0 && comp(A[p], A[i])) {
-      std::swap(A[p], A[i]);
+    while (i > 0 && comp(begin[p], begin[i])) {
+      std::iter_swap(begin + p, begin + i);
       i = p;
       p = d::parent(i);
     }
   }
 
+  /* Swaps the elements at position `i` and `end - 1` and restores the heap
+   * over the range `[begin, end - 1)`. */
   /* Solution to exercise 6.5-7. */
   template <typename RandomIt, typename Compare = std::less<VAL_T>>
-  void heap_delete(RandomIt A, size_t n, size_t i, Compare comp = Compare())
+  void heap_delete(RandomIt begin, RandomIt end, size_t i,
+      Compare comp = Compare())
   {
-    std::swap(A[i], A[n - 1]);
-    heap_settle(A, n - 1, i, comp);
+    std::iter_swap(begin + i, --end);
+    heap_settle(begin, end - begin, i, comp);
   }
 
+  /* Swaps the value in the position first and the value in the position
+   * `end - 1` and makes the subrange `[begin, end - 1)` into a heap. This
+   * has the effect of removing the first (largest) element from the heap
+   * defined by the range `[begin, end)`. */
   template <typename RandomIt, typename Compare = std::less<VAL_T>>
-  void pop_heap(RandomIt A, size_t n, Compare comp = Compare()) {
-    heap_delete(A, n, 0, comp);
+  void pop_heap(RandomIt begin, RandomIt end, Compare comp = Compare()) {
+    heap_delete(begin, end, 0, comp);
   }
 
   template <typename RandomIt, typename Compare = std::less<VAL_T>>
@@ -87,7 +102,8 @@ namespace clrs {
   {
     assert(comp(A[i], key));
     A[i] = key;
-    push_heap(A, i + 1, comp);
+    /* Not sure why this is ambiguous with std::push_heap. */
+    clrs::push_heap(A, A + i + 1, comp);
   }
 
   template <typename RandomIt, typename Compare = std::less<VAL_T>>
