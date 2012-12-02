@@ -7,28 +7,38 @@
 TEST_F(ArrayTest, KWayMerge) {
   typedef int T;
 
-  auto cmp = std::less<T>();
-  size_t n = 10000;
+  auto comp = std::less<T>();
+  size_t n  = 10000;
   auto a(sample<T>(n)), b(sample<T>(n)), c(sample<T>(n)), d(sample<T>(n));
 
+  /* TODO: sorted_sample<T> */
   std::sort(a.begin(), a.end());
   std::sort(b.begin(), b.end());
   std::sort(c.begin(), c.end());
   std::sort(d.begin(), d.end());
 
-  T* As[] = {
-    a.data(),
-    b.data(),
-    c.data(),
-    d.data()
+  auto begins = {
+    a.begin(),
+    b.begin(),
+    c.begin(),
+    d.begin()
   };
 
-  size_t ns[] = { n, n, n, n };
+  auto ends = {
+    a.end(),
+    b.end(),
+    c.end(),
+    d.end()
+  };
 
-  std::vector<T> o(4 * n, 0);
+  std::vector<T> out;
+  out.reserve(4 * n);
 
-  clrs::k_way_merge(As, ns, /*k=*/4, o.data(), cmp);
+  clrs::k_way_merge(begins.begin(), ends.begin(), /*k=*/4,
+      std::back_inserter(out), comp);
 
-  ASSERT_TRUE(std::is_sorted(o.begin(), o.end()));
+  ASSERT_EQ(4 * n, out.size());
+  ASSERT_TRUE(std::is_sorted(out.begin(), out.end()))
+    << take(10, out);
 }
 
