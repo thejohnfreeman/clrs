@@ -22,6 +22,7 @@ build/lib/%.o : lib/%.cpp
 	$(CXX) $(CFLAGS) -o $@ -c $<
 
 TESTS := \
+	02.01-insertion-sort \
 	06.03-make-heap \
 	06.04-heap-sort \
 
