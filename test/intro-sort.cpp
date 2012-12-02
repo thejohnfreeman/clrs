@@ -8,4 +8,3 @@ TEST_F(SortTest, IntroSort) {
   test(intro_sorter());
 }
 
-
