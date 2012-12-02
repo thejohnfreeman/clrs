@@ -23,6 +23,7 @@ build/lib/%.o : lib/%.cpp
 
 TESTS := \
 	02.01-insertion-sort \
+	02.02-merge-sort \
 	06.03-make-heap \
 	06.04-heap-sort \
 
