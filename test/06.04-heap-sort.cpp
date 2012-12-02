@@ -2,8 +2,9 @@
 
 #include "SortTest.hpp"
 
+CLRS_DEFINE_SORTER_T(heap_sorter, clrs::heap_sort)
+
 TEST_F(SortTest, HeapSort) {
-  test(clrs::heap_sort<std::vector<int>::iterator>);
-  //test(clrs::heap_sort);
+  test(heap_sorter());
 }
 
