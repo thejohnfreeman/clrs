@@ -28,6 +28,7 @@ TESTS := \
 	06.04-heap-sort \
 	07.01-partition \
 	07.01-quick-sort \
+	intro-sort
 
 TESTOBJECTS := $(TESTS:%=build/test/%.o)
 
