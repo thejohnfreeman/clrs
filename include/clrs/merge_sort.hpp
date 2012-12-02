@@ -22,14 +22,14 @@ namespace clrs {
   void merge(RandomIt p, RandomIt q, RandomIt r, Compare comp) {
     //printf("merge: %lu < %lu < %lu\n", p, q, r);
     std::vector<typename std::iterator_traits<RandomIt>::value_type> L(p, q);
-    RandomIt i {L.begin()};
-    RandomIt ii {L.end()};
+    auto i = L.begin();
+    auto ii = L.end();
 
     // No need to copy right side.
-    RandomIt j {q};
-    RandomIt jj {r};
+    auto j = q;
+    auto jj = r;
 
-    RandomIt k {p};
+    auto k = p;
     for (; k != r && i != ii && j != jj; ++k) {
       //printf("L[i] = %d <=? R[j] = %d\n", L[i], R[j]);
       /* Must compare this way to keep a stable sort. */
