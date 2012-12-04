@@ -43,6 +43,8 @@ namespace clrs {
     priority_queue(const priority_queue& other) :
       comp(other.comp), c(other.c) {}
 
+    /* Why not use `std::forward` here and get rid of the const-reference
+     * copy constructor? */
     priority_queue(priority_queue&& other) :
       comp(std::move(other.comp)), c(std::move(other.c)) {}
 
@@ -55,8 +57,8 @@ namespace clrs {
 
     const_reference top() const { return c.front(); }
 
-    bool empty() const { return c.empty(); }
-    bool size()  const { return c.size(); }
+    bool      empty() const { return c.empty(); }
+    size_type size()  const { return c.size(); }
 
     void pop() {
       assert(c.size() > 0);
