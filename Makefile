@@ -30,7 +30,8 @@ TESTS := \
 	07.01-partition \
 	07.01-quick-sort \
 	ex-06.05-08-k-way-merge \
-	intro-sort
+	intro-sort \
+	binomial-heap
 
 TESTOBJECTS := $(TESTS:%=build/test/%.o)
 
