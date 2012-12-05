@@ -22,14 +22,12 @@ namespace clrs {
     binomial_tree* sibling;
 
   public:
-    binomial_tree(T&& _value) :
+    explicit binomial_tree(T&& _value) :
       value(_value), degree(0), child(nullptr), sibling(nullptr) {}
 
     /* Binomial-Link(y = orphan, z = this) */
     tree_t* adopt(tree_t* orphan) {
       assert(orphan->sibling == nullptr);
-      // Disable this test for easier heap implementation.
-      //assert(this->sibling   == nullptr);
       assert(this->degree == orphan->degree);
       orphan->sibling = this->child;
       this->child     = orphan;
@@ -46,14 +44,23 @@ namespace clrs {
     template <typename Compare>
     friend tree_t** max(tree_t** largest, Compare comp) {
       assert(*largest && "list must have at least one tree");
-      for (tree_t** i = &largest->sibling; (*i); i = &(*i)->sibling) {
+      for (tree_t** i = &(*largest)->sibling; (*i); i = &(*i)->sibling) {
         if (comp((*largest)->get(), (*i)->get())) {
           largest = i;
         }
       }
       return largest;
     }
+
+    friend std::ostream& operator<< (std::ostream& out, const tree_t& t) {
+      return out << "tree(" << t.get() << ")[" << t.degree << "]";
+    }
   };
+
+  template <typename T>
+  std::ostream& operator<< (std::ostream& out, const binomial_tree<T>* t) {
+    return t ? (out << *t) : (out << "nullptr");
+  }
 
   //template <typename T, typename Compare>
   //binomial_tree<T>** max(binomial_tree<T>** largest, Compare comp) {
@@ -77,8 +84,10 @@ namespace clrs {
   public:
     /* Binomial-Heap-Minimum(H = this) */
     const_reference top() const {
-      tree_t* x = head;
-      return (*max(x, comp))->get();
+      //std::clog << "topping..." << std::endl;
+      tree_t* x = head.get();
+      //std::clog << "head -> " << x << std::endl;;
+      return (*max(&x, comp))->get();
     }
 
     bool empty() const { return head == nullptr; }
@@ -130,7 +139,7 @@ namespace clrs {
       if (!stage) return;
 
       tree_t** x      = &stage;
-      tree_t*  x_next = x->sibling;
+      tree_t*  x_next = stage->sibling;
       while (x_next) {
         if (((*x)->degree != x_next->degree) ||
             (x_next->sibling && x_next->sibling->degree == x_next->degree))
@@ -151,7 +160,7 @@ namespace clrs {
         x_next = (*x)->sibling;
       }
 
-      this->head = stage;
+      this->head.reset(stage);
     }
 
   public:
@@ -163,31 +172,42 @@ namespace clrs {
 
     /* Binomial-Heap-Extract-Min(this) */
     void pop() {
-      assert(this->head && "must have at least one node");
-
+      //std::clog << "popping..." << std::endl;
       tree_t* stage    = this->head.release();
+      //std::clog << "head -> " << stage << std::endl;;
+      //std::clog << "head->sibling -> " << stage->sibling << std::endl;;
       tree_t** largest = max(&stage, comp);
+      //std::clog << "largest -> " << *largest << std::endl;
 
       /* Remove `*largest` from the list. */
       tree_t* x = *largest;
-      /* Might clear head. */
       *largest  = x->sibling;
+      //std::clog << "largest->prev->sibling = largest->sibling -> " << *largest << std::endl;
 
+
+      //std::clog << "largest -> " << x << std::endl;
       /* Reverse the order of `x`'s children. */
       tree_t* x_prev = nullptr;
       x              = x->child;
+      //std::clog << "biggest child -> " << x << std::endl;
       while (x) {
         tree_t* x_next = x->sibling;
         x->sibling     = x_prev;
         x_prev         = x;
         x              = x_next;
       }
+      //std::clog << "smallest child -> " << x_prev << std::endl;
 
-      /* Sets head if we cleared it. */
-      this->absorb(x);
+      this->head.reset(stage);
+      this->absorb(x_prev);
+      //std::clog << "popped" << std::endl;
     }
     
   };
+
+#ifndef NDEBUG
+
+#endif
 
 }
 

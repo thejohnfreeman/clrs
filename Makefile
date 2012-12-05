@@ -29,9 +29,9 @@ TESTS := \
 	06.05-priority-queue \
 	07.01-partition \
 	07.01-quick-sort \
+	19.02-binomial-heap \
 	ex-06.05-08-k-way-merge \
-	intro-sort \
-	binomial-heap
+	intro-sort
 
 TESTOBJECTS := $(TESTS:%=build/test/%.o)
 
