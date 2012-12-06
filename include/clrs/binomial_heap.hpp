@@ -58,7 +58,6 @@ namespace clrs {
     friend std::ostream& operator<< (std::ostream& out, const tree_t& t) {
       return out << "tree(" << t.get() << ")[" << t.degree << "]";
     }
-#endif
 
     friend void print(std::ostream& out, const tree_t* const t,
         std::string& indent, bool is_first_child)
@@ -98,6 +97,7 @@ namespace clrs {
         print(out, t->sibling, indent, false);
       }
     }
+#endif
 
   };
 
@@ -106,7 +106,6 @@ namespace clrs {
   std::ostream& operator<< (std::ostream& out, const binomial_tree<T>* t) {
     return t ? (out << *t) : (out << "nullptr");
   }
-#endif
 
   template <typename T>
   void print(std::ostream& out, const binomial_tree<T>* t,
@@ -117,9 +116,7 @@ namespace clrs {
     indent.reserve(max_degree << 1);
     print(out, t, indent, true);
   }
-
-  //template <typename T, typename Compare>
-  //binomial_tree<T>** max(binomial_tree<T>** largest, Compare comp) {
+#endif
 
   template <typename T, typename Compare = std::less<T>>
   class binomial_heap {
@@ -248,6 +245,7 @@ namespace clrs {
       this->absorb(x_prev);
     }
     
+#ifndef NDEBUG
     friend void print(std::ostream& out, const binomial_heap& bh) {
       size_t max_degree = 0;
       for (tree_t* t = bh.head.get(); t; t = t->sibling) {
@@ -258,12 +256,9 @@ namespace clrs {
 
       print(out, bh.head.get(), max_degree);
     }
+#endif
 
   };
-
-#ifndef NDEBUG
-
-#endif
 
 }
 
