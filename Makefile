@@ -1,10 +1,12 @@
 include $(shell find build -name '*.make' 2>/dev/null)
 
-.PHONY : all test clean
+.PHONY : all test gdb clean
 
 all : $(OBJECTS)
 
 CXX := clang++
+
+GDB := ggdb -q
 
 CFLAGS += -I./include
 #CFLAGS += -O2 -DNDEBUG
@@ -58,6 +60,9 @@ build/test/%.o : test/%.cpp
 
 test : bin/test
 	./bin/test
+
+gdb : bin/test
+	$(GDB) ./bin/test
 
 clean :
 	rm -rf build
