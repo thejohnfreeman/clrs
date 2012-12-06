@@ -115,7 +115,6 @@ namespace clrs {
     }
 #endif
 
-
   };
 
   template <typename T, typename Compare = std::less<T>>
