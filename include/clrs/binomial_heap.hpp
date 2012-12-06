@@ -15,26 +15,27 @@ namespace clrs {
   template <typename T>
   class binomial_tree {
   public:
-    typedef binomial_tree tree_t;
+    typedef binomial_tree           tree_t;
+    typedef std::unique_ptr<tree_t> tree_ptr;
 
   private:
-    T              value;
-    size_t         degree;
-    /* TODO: Make these `std::unique_ptr`s. */
-    binomial_tree* child;
-    binomial_tree* sibling;
+    T        value;
+    size_t   degree;
+    tree_ptr child;
+    tree_ptr sibling;
 
   public:
     explicit binomial_tree(T&& _value) :
       value(_value), degree(0), child(nullptr), sibling(nullptr) {}
 
     /* Binomial-Link(y = orphan, z = this) */
-    tree_t* adopt(tree_t* orphan) {
+    void adopt(tree_ptr&& orphan) {
+      assert(!orphan->sibling);
       assert(this->degree == orphan->degree);
-      orphan->sibling = this->child;
-      this->child     = orphan;
+
+      orphan->sibling.reset(this->child.release());
+      this->child    .swap(orphan);
       ++this->degree;
-      return this;
     }
 
     const T& get() const { return value; }
@@ -44,9 +45,11 @@ namespace clrs {
     friend class binomial_heap;
 
     template <typename Compare>
-    friend tree_t** max(tree_t** largest, Compare comp) {
+    friend const tree_ptr* max(const tree_ptr* largest, Compare comp) {
       assert(*largest && "list must have at least one tree");
-      for (tree_t** i = &(*largest)->sibling; (*i); i = &(*i)->sibling) {
+      for (const tree_ptr* i = &(*largest)->sibling; (*i);
+          i = &(*i)->sibling)
+      {
         if (comp((*largest)->get(), (*i)->get())) {
           largest = i;
         }
@@ -59,7 +62,11 @@ namespace clrs {
       return out << "tree(" << t.get() << ")[" << t.degree << "]";
     }
 
-    friend void print(std::ostream& out, const tree_t* const t,
+    friend std::ostream& operator<< (std::ostream& out, const tree_ptr& t) {
+      return t ? (out << *t) : (out << "nullptr");
+    }
+
+    friend void print(std::ostream& out, const tree_ptr& t,
         std::string& indent, bool is_first_child)
     {
       typedef binomial_tree<T> tree_t;
@@ -97,33 +104,28 @@ namespace clrs {
         print(out, t->sibling, indent, false);
       }
     }
+
+    friend void print(std::ostream& out, const tree_ptr& t,
+        const size_t max_degree = 2)
+    {
+      if (!t) return;
+      std::string indent;
+      indent.reserve(max_degree << 1);
+      print(out, t, indent, true);
+    }
 #endif
+
 
   };
-
-#ifndef NDEBUG
-  template <typename T>
-  std::ostream& operator<< (std::ostream& out, const binomial_tree<T>* t) {
-    return t ? (out << *t) : (out << "nullptr");
-  }
-
-  template <typename T>
-  void print(std::ostream& out, const binomial_tree<T>* t,
-      const size_t max_degree = 2)
-  {
-    if (!t) return;
-    std::string indent;
-    indent.reserve(max_degree << 1);
-    print(out, t, indent, true);
-  }
-#endif
 
   template <typename T, typename Compare = std::less<T>>
   class binomial_heap {
   private:
-    typedef binomial_tree<T> tree_t;
-    Compare                  comp;
-    std::unique_ptr<tree_t>  head;
+    typedef binomial_tree<T>           tree_t;
+    typedef typename tree_t::tree_ptr  tree_ptr;
+
+    Compare  comp;
+    tree_ptr head;
 
   public:
     typedef T        value_type;
@@ -137,41 +139,37 @@ namespace clrs {
   public:
     /* Binomial-Heap-Minimum(H = this) */
     const_reference top() const {
-      tree_t* x = head.get();
-      return (*max(&x, comp))->get();
+      return (*max(&this->head, comp))->get();
     }
 
-    bool empty() const { return head == nullptr; }
+    bool empty() const { return !head; }
 
-    size_type size()  const {
+    size_type size() const {
       /* TODO: Keep track ourselves instead? */
       size_type s = 0;
-      for (tree_t* i = head; i; i = i->sibling) {
+      for (const tree_t* i = head.get(); i; i = i->sibling.get()) {
         s += 1 << i->degree;
       }
       return s;
     }
 
+    /* Binomial-Heap-Union(this, other) */
+    /* Empties the other heap into this one. */
     void absorb(binomial_heap&& other) {
-      this->absorb(other.head.release());
+      this->absorb(std::move(other.head));
     }
 
   private:
-    /* Binomial-Heap-Union(this, other) */
-    /* Empties the other heap into this one. */
-    void absorb(tree_t* other) {
+    void absorb(tree_ptr&& other) {
       /* Walk along the linked list of trees, inserting `other`'s nodes
        * between ours. */
 
       /* Binomial-Heap-Merge(this, other) */
-      /* We may change head. Easier to release now than put in a special
-       * check later. */
-      tree_t* stage = this->head.release();
       /* Keep a pointer to the link to the tree (whether its `head` or
        * `sibling`) so that we can easily change it without managing two
        * pointers. */
-      tree_t** i    = &stage;
-      tree_t* j     = other;
+      tree_ptr* i = &this->head;
+      tree_ptr j(std::move(other));
 
       while (j) {
         /* Find the next tree in our list whose degree is not less than the
@@ -179,82 +177,80 @@ namespace clrs {
         while (*i && ((*i)->degree < j->degree)) {
           i = &(*i)->sibling;
         }
-        /* Remove the tree from the other list. */
-        tree_t* y = j;
-        j = j->sibling;
         /* Insert the tree from the other list right before the tree in our
          * list. */
-        y->sibling = *i;
-        *i = y;
+        j->sibling.swap(*i);
+        /* Remove the tree from the other list. */
+        j.swap(*i);
       }
 
-      if (!stage) return;
+      if (!this->head) return;
 
-      tree_t** x      = &stage;
-      tree_t*  x_next = stage->sibling;
-      while (x_next) {
-        if (((*x)->degree != x_next->degree) ||
-            (x_next->sibling && x_next->sibling->degree == x_next->degree))
+      tree_ptr* x      = &this->head;
+      tree_ptr* x_next = &this->head->sibling;
+      while (*x_next) {
+        if (((*x)->degree != (*x_next)->degree) ||
+            ((*x_next)->sibling &&
+             (*x_next)->sibling->degree == (*x_next)->degree))
         {
           x = &(*x)->sibling;
         } else {
-          /* Make sure `x` has the larger key. */
-          if (comp((*x)->get(), x_next->get())) {
-            /* Links the head or previous tree in the list to `x`. */
-            std::swap(*x, x_next);
+          tree_ptr child;
+          /* Splice out the smaller key. */
+          if (comp((*x)->get(), (*x_next)->get())) {
+            child.swap(*x);
+            x->swap(child->sibling);
           } else {
-            /* Links `x` to the next tree in the list. */
-            (*x)->sibling = x_next->sibling;
+            child.swap(*x_next);
+            x_next->swap(child->sibling);
           }
           /* Merge the two trees. */
-          (*x)->adopt(x_next);
+          assert(!child->sibling);
+          (*x)->adopt(std::move(child));
         }
-        x_next = (*x)->sibling;
+        x_next = &(*x)->sibling;
       }
-
-      this->head.reset(stage);
     }
 
   public:
     /* Binomial-Heap-Insert(this, value) */
     void push(T&& value) {
-      tree_t* elt = new tree_t(std::forward<T>(value));
-      this->absorb(elt);
+      tree_ptr elt(new tree_t(std::forward<T>(value)));
+      this->absorb(std::move(elt));
     }
 
     /* Binomial-Heap-Extract-Min(this) */
     void pop() {
-      tree_t* stage    = this->head.release();
-      tree_t** largest = max(&stage, comp);
+      tree_ptr* largest = const_cast<tree_ptr*>(max(&this->head, comp));
 
       /* Remove `*largest` from the list. */
-      tree_t* x = *largest;
-      *largest  = x->sibling;
+      tree_ptr x(std::move(*largest));
+      largest->swap(x->sibling);
+      assert(!x->sibling);
 
       /* Reverse the order of `x`'s children. */
-      tree_t* x_prev = nullptr;
-      x              = x->child;
+      tree_ptr x_prev(nullptr);
+      /* Note: deletes the tree that had the largest key. */
+      x.reset(x->child.release());
       while (x) {
-        tree_t* x_next = x->sibling;
-        x->sibling     = x_prev;
-        x_prev         = x;
-        x              = x_next;
+        x->sibling.swap(x_prev);
+        x_prev.swap(x);
       }
+      assert(!x);
 
-      this->head.reset(stage);
-      this->absorb(x_prev);
+      this->absorb(std::move(x_prev));
     }
     
 #ifndef NDEBUG
     friend void print(std::ostream& out, const binomial_heap& bh) {
       size_t max_degree = 0;
-      for (tree_t* t = bh.head.get(); t; t = t->sibling) {
+      for (const tree_t* t = bh.head.get(); t; t = t->sibling.get()) {
         if (t->degree > max_degree) {
           max_degree = t->degree;
         }
       }
 
-      print(out, bh.head.get(), max_degree);
+      print(out, bh.head, max_degree);
     }
 #endif
 

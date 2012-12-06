@@ -7,7 +7,23 @@ TEST(BinomialHeap, Push) {
   bh.push(16);
   bh.push(42);
   bh.push(23);
-};
+}
+
+TEST(BinomialHeap, Empty) {
+  clrs::binomial_heap<int> bh;
+  bh.push(16);
+  bh.push(42);
+  bh.push(23);
+  ASSERT_TRUE(!bh.empty());
+}
+
+TEST(BinomialHeap, Size) {
+  clrs::binomial_heap<int> bh;
+  bh.push(16);
+  bh.push(42);
+  bh.push(23);
+  ASSERT_EQ(3, bh.size());
+}
 
 TEST(BinomialHeap, Top) {
   clrs::binomial_heap<int> bh;
@@ -51,7 +67,9 @@ TEST(BinomialHeap, Print) {
   bh.push(1);
 
   bh.push(10);
-  //print(std::clog, bh);
+#ifndef NDEBUG
+  print(std::clog, bh);
+#endif
 }
 
 TEST(BinomialHeap, Merge) {
@@ -89,11 +107,15 @@ TEST(BinomialHeap, Merge) {
   bh2.push(3);
   bh2.push(18);
 
-  //print(std::clog, bh1);
-  //print(std::clog, bh2);
+#ifndef NDEBUG
+  print(std::clog, bh1);
+  print(std::clog, bh2);
+#endif
 
   bh1.absorb(std::move(bh2));
-  //print(std::clog, bh1);
-  //print(std::clog, bh2);
+#ifndef NDEBUG
+  print(std::clog, bh1);
+  print(std::clog, bh2);
+#endif
 }
 
