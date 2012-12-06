@@ -119,3 +119,9 @@ TEST(BinomialHeap, Merge) {
 #endif
 }
 
+TEST(BinomialHeap, Leaks) {
+#ifndef NDEBUG
+  ASSERT_EQ(0, clrs::binomial_tree<int>::leaks());
+#endif
+}
+

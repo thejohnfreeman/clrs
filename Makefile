@@ -9,8 +9,8 @@ CXX := clang++
 GDB := ggdb -q
 
 CFLAGS += -I./include
-CFLAGS += -O2 -DNDEBUG
-#CFLAGS += -O0 -g3
+#CFLAGS += -O2 -DNDEBUG
+CFLAGS += -O0 -g3
 CFLAGS += -std=c++11
 CFLAGS += -stdlib=libc++ -U__STRICT_ANSI__
 LFLAGS += -stdlib=libc++ 
@@ -59,7 +59,7 @@ build/test/%.o : test/%.cpp
 	$(CXX) $(CFLAGS) $(TESTCFLAGS) -o $@ -c $<
 
 test : bin/test
-	./bin/test
+	./bin/test 2>/dev/null
 
 gdb : bin/test
 	$(GDB) ./bin/test

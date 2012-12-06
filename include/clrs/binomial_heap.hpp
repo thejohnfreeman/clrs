@@ -24,9 +24,28 @@ namespace clrs {
     tree_ptr child;
     tree_ptr sibling;
 
+#ifndef NDEBUG
+    static int leaks_;
+#endif
+
   public:
     explicit binomial_tree(T&& _value) :
-      value(_value), degree(0), child(nullptr), sibling(nullptr) {}
+      value(_value), degree(0), child(nullptr), sibling(nullptr)
+    {
+#ifndef NDEBUG
+      ++leaks_;
+#endif
+    }
+
+    ~binomial_tree() {
+#ifndef NDEBUG
+      --leaks_;
+#endif
+    }
+
+#ifndef NDEBUG
+    static int leaks() { return leaks_; }
+#endif
 
     /* Binomial-Link(y = orphan, z = this) */
     void adopt(tree_ptr&& orphan) {
@@ -116,6 +135,11 @@ namespace clrs {
 #endif
 
   };
+
+#ifndef NDEBUG
+  template <typename T>
+  int binomial_tree<T>::leaks_ = 0;
+#endif
 
   template <typename T, typename Compare = std::less<T>>
   class binomial_heap {
