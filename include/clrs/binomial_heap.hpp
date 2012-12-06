@@ -3,6 +3,9 @@
 
 #include <functional>
 #include <cassert>
+#ifndef NDEBUG
+#include <iostream>
+#endif
 
 namespace clrs {
 
@@ -27,7 +30,6 @@ namespace clrs {
 
     /* Binomial-Link(y = orphan, z = this) */
     tree_t* adopt(tree_t* orphan) {
-      assert(orphan->sibling == nullptr);
       assert(this->degree == orphan->degree);
       orphan->sibling = this->child;
       this->child     = orphan;
@@ -52,14 +54,68 @@ namespace clrs {
       return largest;
     }
 
+#ifndef NDEBUG
     friend std::ostream& operator<< (std::ostream& out, const tree_t& t) {
       return out << "tree(" << t.get() << ")[" << t.degree << "]";
     }
+#endif
+
+    friend void print(std::ostream& out, const tree_t* const t,
+        std::string& indent, bool is_first_child)
+    {
+      typedef binomial_tree<T> tree_t;
+      assert(t && "cannot print empty tree");
+
+      if (t->child) {
+        /* Add indentation for children. Shouldn't re-allocate if we reserved
+         * enough space. */
+        if (is_first_child) {
+          indent += "  ";
+        } else {
+          indent += "| ";
+        }
+
+        print(out, t->child, indent, true);
+
+        /* Pop the last two characters. Find a new way if this re-allocates. */
+        indent.resize(indent.size() - 2);
+
+        out << indent;
+        if (is_first_child) {
+          out << ' ';
+        } else {
+          out << '|';
+        }
+        out << '/' << std::endl;
+      }
+
+      /* Print myself. */
+      out << indent << "* " << t->get() << std::endl;
+
+      /* Print my siblings. */
+      if (t->sibling) {
+        out << indent << '|' << std::endl;
+        print(out, t->sibling, indent, false);
+      }
+    }
+
   };
 
+#ifndef NDEBUG
   template <typename T>
   std::ostream& operator<< (std::ostream& out, const binomial_tree<T>* t) {
     return t ? (out << *t) : (out << "nullptr");
+  }
+#endif
+
+  template <typename T>
+  void print(std::ostream& out, const binomial_tree<T>* t,
+      const size_t max_degree = 2)
+  {
+    if (!t) return;
+    std::string indent;
+    indent.reserve(max_degree << 1);
+    print(out, t, indent, true);
   }
 
   //template <typename T, typename Compare>
@@ -84,9 +140,7 @@ namespace clrs {
   public:
     /* Binomial-Heap-Minimum(H = this) */
     const_reference top() const {
-      //std::clog << "topping..." << std::endl;
       tree_t* x = head.get();
-      //std::clog << "head -> " << x << std::endl;;
       return (*max(&x, comp))->get();
     }
 
@@ -121,6 +175,7 @@ namespace clrs {
        * pointers. */
       tree_t** i    = &stage;
       tree_t* j     = other;
+
       while (j) {
         /* Find the next tree in our list whose degree is not less than the
          * next tree in the other list. */
@@ -172,37 +227,38 @@ namespace clrs {
 
     /* Binomial-Heap-Extract-Min(this) */
     void pop() {
-      //std::clog << "popping..." << std::endl;
       tree_t* stage    = this->head.release();
-      //std::clog << "head -> " << stage << std::endl;;
-      //std::clog << "head->sibling -> " << stage->sibling << std::endl;;
       tree_t** largest = max(&stage, comp);
-      //std::clog << "largest -> " << *largest << std::endl;
 
       /* Remove `*largest` from the list. */
       tree_t* x = *largest;
       *largest  = x->sibling;
-      //std::clog << "largest->prev->sibling = largest->sibling -> " << *largest << std::endl;
 
-
-      //std::clog << "largest -> " << x << std::endl;
       /* Reverse the order of `x`'s children. */
       tree_t* x_prev = nullptr;
       x              = x->child;
-      //std::clog << "biggest child -> " << x << std::endl;
       while (x) {
         tree_t* x_next = x->sibling;
         x->sibling     = x_prev;
         x_prev         = x;
         x              = x_next;
       }
-      //std::clog << "smallest child -> " << x_prev << std::endl;
 
       this->head.reset(stage);
       this->absorb(x_prev);
-      //std::clog << "popped" << std::endl;
     }
     
+    friend void print(std::ostream& out, const binomial_heap& bh) {
+      size_t max_degree = 0;
+      for (tree_t* t = bh.head.get(); t; t = t->sibling) {
+        if (t->degree > max_degree) {
+          max_degree = t->degree;
+        }
+      }
+
+      print(out, bh.head.get(), max_degree);
+    }
+
   };
 
 #ifndef NDEBUG
