@@ -17,8 +17,8 @@ namespace clrs {
   void intro_sort(RandomIt begin, RandomIt end, const size_t threshold,
       Compare comp = Compare())
   {
+    if (begin == end) return;
     assert(begin < end);
-
     if ((end - begin) < threshold) {
       heap_sort(begin, end, comp);
     } else {
@@ -33,6 +33,7 @@ namespace clrs {
     typename Compare
       = std::less<typename std::iterator_traits<RandomIt>::value_type>>
   void intro_sort(RandomIt begin, RandomIt end, Compare comp = Compare()) {
+    if (begin == end) return;
     size_t threshold = std::log2(end - begin) + 1;
     intro_sort(begin, end, threshold, comp);
   }

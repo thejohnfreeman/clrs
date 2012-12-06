@@ -40,3 +40,4 @@ TEST_F(ArrayTest, PriorityQueuePush) {
 
   assert_is_ordered(pq, cmp);
 }
+

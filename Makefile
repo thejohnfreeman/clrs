@@ -7,7 +7,8 @@ all : $(OBJECTS)
 CXX := clang++
 
 CFLAGS += -I./include
-CFLAGS += -O2 -DNDEBUG
+#CFLAGS += -O2 -DNDEBUG
+CFLAGS += -O0 -g3
 CFLAGS += -std=c++11
 CFLAGS += -stdlib=libc++ -U__STRICT_ANSI__
 LFLAGS += -stdlib=libc++ 
