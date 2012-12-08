@@ -76,7 +76,10 @@ TESTOBJECTS  := $(TESTS:%=$(OBJDIR)/$(TESTDIR)/%.o)
 TESTCXXFLAGS := -I$(GTEST_SRCDIR)/include
 TESTLXXFLAGS := -L$(GTEST_LIBDIR) -lgtest -lgtest_main
 
-.PHONY : test
+.PHONY : test verbose
+
+verbose : $(INSTALLDIR)/test
+	GTEST_OUTPUT=verbose $(INSTALLDIR)/test
 
 test : $(INSTALLDIR)/test
 	$(INSTALLDIR)/test 2>/dev/null
