@@ -1,6 +1,7 @@
 #ifndef CLRS_02_03_MERGE_SORT
 #define CLRS_02_03_MERGE_SORT
 
+#include <iostream>
 #include <vector>
 #include <cassert>
 #include <algorithm>
@@ -20,8 +21,10 @@ namespace clrs {
     typename Compare
       = std::less<typename std::iterator_traits<RandomIt>::value_type>>
   void merge(RandomIt p, RandomIt q, RandomIt r, Compare comp) {
-    //printf("merge: %lu < %lu < %lu\n", p, q, r);
-    std::vector<typename std::iterator_traits<RandomIt>::value_type> L(p, q);
+    //printf("merge: |[p, q)| = %lu, |[q, r)| = %lu\n", q - p, r - q);
+    std::vector<typename std::iterator_traits<RandomIt>::value_type> L;
+    L.reserve(q - p);
+    L.assign(std::make_move_iterator(p), std::make_move_iterator(q));
     auto i = L.begin();
     auto ii = L.end();
 
@@ -31,21 +34,19 @@ namespace clrs {
 
     auto k = p;
     for (; k != r && i != ii && j != jj; ++k) {
-      //printf("L[i] = %d <=? R[j] = %d\n", L[i], R[j]);
+      //std::cout << "R[j] = " << *j << " <? L[i] = " << *i << std::endl;
       /* Must compare this way to keep a stable sort. */
       if (comp(*j, *i)) {
-        //printf("A[%lu] = R[%lu] = %d\n", k, j, R[j]);
         *k = std::move(*j++);
+        //std::cout << "yes, A[k] = R[j] = " << *k << std::endl;
       } else {
-        //printf("A[%lu] = L[%lu] = %d\n", k, i, L[i]);
         *k = std::move(*i++);
+        //std::cout << "no, A[k] = L[i] = " << *k << std::endl;
       }
     }
 
     if (i != ii) {
       std::move(i, ii, k);
-    } else if (j != jj) {
-      std::move(j, jj, k);
     }
   }
 
@@ -53,7 +54,7 @@ namespace clrs {
     typename RandomIt,
     typename Compare
       = std::less<typename std::iterator_traits<RandomIt>::value_type>>
-  void merge_sort(RandomIt begin, RandomIt end, Compare comp) {
+  void merge_sort(RandomIt begin, RandomIt end, Compare comp = Compare()) {
     if ((end - begin) < 2) return;
     RandomIt mid = begin + ((end - begin) >> 1);
     merge_sort(begin, mid, comp);

@@ -20,6 +20,8 @@ TESTS := \
 INSTALLDIR := bin
 INSTALLDIR := $(abspath $(INSTALLDIR))
 
+INCPATHS := $(HOME)/local/include ./include
+
 
 ## default target
 
@@ -48,7 +50,7 @@ dep_cxx = \
 
 CXX := clang++
 
-FLAGS += -I./include
+FLAGS += $(foreach INCPATH, $(INCPATHS), -I$(INCPATH))
 #FLAGS += -O2 -DNDEBUG
 FLAGS += -O0 -g3
 

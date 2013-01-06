@@ -8,18 +8,22 @@
 namespace clrs {
 
   template <
-    typename RandomIt,
+    typename BidirIt,
     typename Compare
-      = std::less<typename std::iterator_traits<RandomIt>::value_type>>
-  void insertion_sort(RandomIt begin, RandomIt end, Compare comp = Compare())
+      = std::less<typename std::iterator_traits<BidirIt>::value_type>>
+  void insertion_sort(BidirIt begin, BidirIt end, Compare comp = Compare())
   {
-    for (RandomIt j = begin; j != end; ++j) {
-      typename std::iterator_traits<RandomIt>::value_type key(*j);
+    if (begin == end) return;
+    BidirIt j = begin;
+    for (++j; j != end; ++j) {
+      typename std::iterator_traits<BidirIt>::value_type key(std::move(*j));
       // Insert `*j` into the sorted sequence `[begin, j)`.
-      for (RandomIt i = j - 1; comp(key, *i); --i) {
-        *(i + 1) = std::move(*i);
-        if (i == begin) break;
+      BidirIt i = j, iplus1 = j;
+      for (--i; comp(key, *i); --iplus1) {
+        *(iplus1) = std::move(*i);
+        if (i-- == begin) break;
       }
+      *++i = std::move(key);
     }
   }
 
