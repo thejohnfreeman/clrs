@@ -9,13 +9,14 @@
 
 #include <autocheck/autocheck.hpp>
 
-#define CLRS_DEFINE_SORTER_T(name, sort) \
+#define CLRS_DEFINE_SORTER_T(name, sort2) \
   struct name {\
     template <typename Container>\
     bool operator() (Container& xs) {\
-      sort(xs.begin(), xs.end());\
-      using namespace autocheck;\
-      return std::is_sorted(xs.begin(), xs.end());\
+      Container ys(xs);\
+      std::sort(xs.begin(), xs.end());\
+      sort2(ys.begin(), ys.end());\
+      return xs == ys;\
     }\
   };
 
