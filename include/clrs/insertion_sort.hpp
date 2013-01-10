@@ -16,14 +16,14 @@ namespace clrs {
     if (begin == end) return;
     BidirIt j = begin;
     for (++j; j != end; ++j) {
-      typename std::iterator_traits<BidirIt>::value_type key(std::move(*j));
       // Insert `*j` into the sorted sequence `[begin, j)`.
       BidirIt i = j, iplus1 = j;
-      for (--i; comp(key, *i); --iplus1) {
-        *(iplus1) = std::move(*i);
-        if (i-- == begin) break;
+      if (comp(*iplus1, *--i)) {
+        auto key = std::move(*iplus1);
+        do *(iplus1) = std::move(*i);
+        while (--iplus1 != begin && comp(key, *--i));
+        *iplus1 = std::move(key);
       }
-      *++i = std::move(key);
     }
   }
 
