@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <cassert>
+#include <initializer_list>
 #ifndef NDEBUG
 #include <iostream>
 #endif
@@ -20,9 +21,9 @@ namespace clrs {
 
   private:
     T        value;
-    size_t   degree;
-    tree_ptr child;
-    tree_ptr sibling;
+    size_t   degree  = 0;
+    tree_ptr child   = nullptr;
+    tree_ptr sibling = nullptr;
 
 #ifndef NDEBUG
     static int alive;
@@ -30,11 +31,15 @@ namespace clrs {
 
   public:
     explicit binomial_tree(const T& _value) :
-      binomial_tree(T(_value)) {}
+      value(_value)
+    {
+#ifndef NDEBUG
+      ++alive;
+#endif
+    }
 
     explicit binomial_tree(T&& _value) :
-      value(std::forward<T>(_value)),
-      degree(0), child(nullptr), sibling(nullptr)
+      value(std::forward<T>(_value))
     {
 #ifndef NDEBUG
       ++alive;
@@ -152,7 +157,7 @@ namespace clrs {
     typedef typename tree_t::tree_ptr  tree_ptr;
 
     Compare  comp;
-    tree_ptr head;
+    tree_ptr head = nullptr;
 
   public:
     typedef T        value_type;
@@ -161,7 +166,21 @@ namespace clrs {
     typedef const T& const_reference;
 
     binomial_heap(Compare&& _comp = Compare()) :
-      comp(std::forward<Compare>(_comp)), head(nullptr) {}
+      comp(std::forward<Compare>(_comp)) {}
+
+    template <typename InputIt>
+    binomial_heap(InputIt first, InputIt last,
+        const Compare& _comp = Compare()) :
+      comp(_comp)
+    {
+      while (first != last) {
+        push(*first++);
+      }
+    }
+
+    binomial_heap(std::initializer_list<T> list,
+        const Compare& _comp = Compare()) :
+      binomial_heap(list.begin(), list.end(), _comp) {}
 
   public:
     /* Binomial-Heap-Minimum(H = this) */

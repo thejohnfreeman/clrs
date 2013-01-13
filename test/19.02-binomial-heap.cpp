@@ -2,110 +2,54 @@
 
 #include <clrs/binomial_heap.hpp>
 
-TEST(BinomialHeap, Push) {
-  clrs::binomial_heap<int> bh;
-  bh.push(16);
-  bh.push(42);
-  bh.push(23);
-}
+#include "check_container.hpp"
+#include "props_heap.hpp"
+
+#define CHECK_PROP(name, type) \
+  check_container<type>(prop_heap_##name<clrs::binomial_heap<type>>());
 
 TEST(BinomialHeap, Empty) {
-  clrs::binomial_heap<int> bh;
-  bh.push(16);
-  bh.push(42);
-  bh.push(23);
-  ASSERT_TRUE(!bh.empty());
+  CHECK_PROP(empty, int);
+  CHECK_PROP(empty, std::string);
 }
 
 TEST(BinomialHeap, Size) {
-  clrs::binomial_heap<int> bh;
-  bh.push(16);
-  bh.push(42);
-  bh.push(23);
-  ASSERT_EQ(3, bh.size());
+  CHECK_PROP(size, int);
+  CHECK_PROP(size, std::string);
 }
 
 TEST(BinomialHeap, Top) {
-  clrs::binomial_heap<int> bh;
-  bh.push(16);
-  ASSERT_EQ(16, bh.top());
-  bh.push(42);
-  ASSERT_EQ(42, bh.top());
-  bh.push(23);
-  ASSERT_EQ(42, bh.top());
+  CHECK_PROP(top, int);
+  CHECK_PROP(top, std::string);
 }
 
 TEST(BinomialHeap, Pop) {
-  clrs::binomial_heap<int> bh;
-  bh.push(16);
-  bh.push(42);
-  bh.push(23);
-  ASSERT_EQ(42, bh.top());
-  bh.pop();
-  ASSERT_EQ(23, bh.top());
-  bh.pop();
-  ASSERT_EQ(16, bh.top());
-  bh.pop();
-  ASSERT_TRUE(bh.empty());
+  CHECK_PROP(pop, int);
+  CHECK_PROP(pop, std::string);
+}
+
+TEST(BinomialHeap, Sort) {
+  CHECK_PROP(sort, int);
+  CHECK_PROP(sort, std::string);
 }
 
 TEST(BinomialHeap, Print) {
-  clrs::binomial_heap<int, std::greater<int>> bh;
-  bh.push(27);
-  bh.push(11);
-  bh.push(17);
-  bh.push(8);
-
-  bh.push(38);
-  bh.push(14);
-  bh.push(29);
-  bh.push(6);
-
-  bh.push(18);
-  bh.push(12);
-  bh.push(25);
-  bh.push(1);
-
-  bh.push(10);
+  clrs::binomial_heap<int, std::greater<int>> bh = {
+    27, 11, 17, 8, 38, 14, 29, 6, 18, 12, 25, 1, 10
+  };
 #ifndef NDEBUG
   print(std::clog, bh);
 #endif
 }
 
 TEST(BinomialHeap, Merge) {
-  clrs::binomial_heap<int, std::greater<int>> bh1;
-  bh1.push(41);
-  bh1.push(28);
-  bh1.push(33);
-  bh1.push(15);
-  bh1.push(25);
-  bh1.push(7);
-  bh1.push(12);
+  clrs::binomial_heap<int, std::greater<int>> bh1 = {
+    41, 28, 33, 15, 25, 7, 12
+  };
 
-  clrs::binomial_heap<int, std::greater<int>> bh2;
-  bh2.push(55);
-  bh2.push(45);
-  bh2.push(32);
-  bh2.push(30);
-
-  bh2.push(24);
-  bh2.push(23);
-  bh2.push(22);
-  bh2.push(8);
-
-  bh2.push(50);
-  bh2.push(48);
-  bh2.push(31);
-  bh2.push(29);
-
-  bh2.push(17);
-  bh2.push(10);
-  bh2.push(44);
-  bh2.push(6);
-
-  bh2.push(37);
-  bh2.push(3);
-  bh2.push(18);
+  clrs::binomial_heap<int, std::greater<int>> bh2 = {
+    55, 45, 32, 30, 24, 23, 22, 8, 50, 48, 31, 29, 17, 10, 44, 6, 37, 3, 18
+  };
 
 #ifndef NDEBUG
   print(std::clog, bh1);
@@ -113,6 +57,7 @@ TEST(BinomialHeap, Merge) {
 #endif
 
   bh1.absorb(std::move(bh2));
+
 #ifndef NDEBUG
   print(std::clog, bh1);
   print(std::clog, bh2);
@@ -122,6 +67,7 @@ TEST(BinomialHeap, Merge) {
 TEST(BinomialHeap, Leaks) {
 #ifndef NDEBUG
   ASSERT_EQ(0, clrs::binomial_tree<int>::leaks());
+  ASSERT_EQ(0, clrs::binomial_tree<std::string>::leaks());
 #endif
 }
 

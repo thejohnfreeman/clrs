@@ -1,43 +1,35 @@
-#include <functional>
+#include <gtest/gtest.h>
 
 #include <clrs/priority_queue.hpp>
 
-#include "ArrayTest.hpp"
+#include "check_container.hpp"
+#include "props_heap.hpp"
 
-template <typename T, typename Cmp>
-void assert_is_ordered(clrs::priority_queue<T>& pq, const Cmp& cmp) {
-  auto last = pq.top();
-  pq.pop();
-  while (!pq.empty()) {
-    auto next = pq.top();
-    pq.pop();
-    ASSERT_TRUE(cmp(next, last)) <<
-      "cmp(" << next << ", " << last << ")";
-    last = next;
-  }
+#define CHECK_PROP(name, type) \
+  check_container<type>(prop_heap_##name<clrs::priority_queue<type>>());
+
+TEST(PriorityQueue, Empty) {
+  CHECK_PROP(empty, int);
+  CHECK_PROP(empty, std::string);
 }
 
-TEST_F(ArrayTest, PriorityQueueTopPop) {
-  typedef int T;
-  size_t n = 10000;
-  std::less<T> cmp;
-
-  auto A(sample<T>(n));
-  clrs::priority_queue<T> pq(cmp, std::move(A));
-  assert_is_ordered(pq, cmp);
+TEST(PriorityQueue, Size) {
+  CHECK_PROP(size, int);
+  CHECK_PROP(size, std::string);
 }
 
-TEST_F(ArrayTest, PriorityQueuePush) {
-  typedef int T;
-  size_t n = 10000;
-  std::less<T> cmp;
+TEST(PriorityQueue, Top) {
+  CHECK_PROP(top, int);
+  CHECK_PROP(top, std::string);
+}
 
-  auto A(sample<T>(n));
-  clrs::priority_queue<T> pq(cmp);
-  for (auto item : A) {
-    pq.push(item);
-  }
+TEST(PriorityQueue, Pop) {
+  CHECK_PROP(pop, int);
+  CHECK_PROP(pop, std::string);
+}
 
-  assert_is_ordered(pq, cmp);
+TEST(PriorityQueue, Sort) {
+  CHECK_PROP(sort, int);
+  CHECK_PROP(sort, std::string);
 }
 

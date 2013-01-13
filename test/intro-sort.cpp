@@ -1,10 +1,13 @@
 #include <clrs/intro_sort.hpp>
 
-#include "SortTest.hpp"
+#include "check_container.hpp"
+#include "props_sort.hpp"
 
-CLRS_DEFINE_SORTER_T(intro_sorter, clrs::intro_sort)
+CLRS_DEFINE_PROP_SORT(prop_intro_sort, clrs::intro_sort)
 
-TEST_F(SortTest, IntroSort) {
-  test(intro_sorter());
+TEST(IntroSort, Sorts) {
+  check_container<unsigned int>(prop_intro_sort());
+  check_container<int>(prop_intro_sort());
+  check_container<std::string>(prop_intro_sort());
 }
 

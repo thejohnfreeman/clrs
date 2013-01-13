@@ -1,10 +1,13 @@
 #include <clrs/heap_sort.hpp>
 
-#include "SortTest.hpp"
+#include "check_container.hpp"
+#include "props_sort.hpp"
 
-CLRS_DEFINE_SORTER_T(heap_sorter, clrs::heap_sort)
+CLRS_DEFINE_PROP_SORT(prop_heap_sort, clrs::heap_sort)
 
-TEST_F(SortTest, HeapSort) {
-  test(heap_sorter());
+TEST(HeapSort, Sorts) {
+  check_container<unsigned int>(prop_heap_sort());
+  check_container<int>(prop_heap_sort());
+  check_container<std::string>(prop_heap_sort());
 }
 
