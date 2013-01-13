@@ -25,26 +25,30 @@ namespace clrs {
     tree_ptr sibling;
 
 #ifndef NDEBUG
-    static int leaks_;
+    static int alive;
 #endif
 
   public:
+    explicit binomial_tree(const T& _value) :
+      binomial_tree(T(_value)) {}
+
     explicit binomial_tree(T&& _value) :
-      value(_value), degree(0), child(nullptr), sibling(nullptr)
+      value(std::forward<T>(_value)),
+      degree(0), child(nullptr), sibling(nullptr)
     {
 #ifndef NDEBUG
-      ++leaks_;
+      ++alive;
 #endif
     }
 
     ~binomial_tree() {
 #ifndef NDEBUG
-      --leaks_;
+      --alive;
 #endif
     }
 
 #ifndef NDEBUG
-    static int leaks() { return leaks_; }
+    static int leaks() { return alive; }
 #endif
 
     /* Binomial-Link(y = orphan, z = this) */
@@ -138,7 +142,7 @@ namespace clrs {
 
 #ifndef NDEBUG
   template <typename T>
-  int binomial_tree<T>::leaks_ = 0;
+  int binomial_tree<T>::alive = 0;
 #endif
 
   template <typename T, typename Compare = std::less<T>>
@@ -237,6 +241,11 @@ namespace clrs {
 
   public:
     /* Binomial-Heap-Insert(this, value) */
+    void push(const T& value) {
+      tree_ptr elt(new tree_t(value));
+      this->absorb(std::move(elt));
+    }
+
     void push(T&& value) {
       tree_ptr elt(new tree_t(std::forward<T>(value)));
       this->absorb(std::move(elt));
