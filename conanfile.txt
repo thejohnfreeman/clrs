@@ -1,0 +1,6 @@
+[build_requires]
+autocheck/1.0.0@autocheck/stable
+gtest/1.8.1@bincrafters/stable
+
+[generators]
+cmake_find_package
