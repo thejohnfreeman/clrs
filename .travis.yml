@@ -1,6 +1,11 @@
 sudo: required
 language: cpp
 
+addons:
+  apt:
+    packages:
+      - g++-7
+
 matrix:
   include:
     # We need to use Ubuntu Xenial to upgrade pip.
@@ -23,6 +28,8 @@ matrix:
       compiler: gcc
       env:
         - BUILD_TYPE=Debug
+        - CC=gcc-7
+        - CXX=g++-7
         - CXXFLAGS='-D_GLIBCXX_USE_CXX11_ABI=1'
         - LIBCXX=libstdc++11
     - os: linux
@@ -30,6 +37,8 @@ matrix:
       compiler: gcc
       env:
         - BUILD_TYPE=Release
+        - CC=gcc-7
+        - CXX=g++-7
         - CXXFLAGS='-D_GLIBCXX_USE_CXX11_ABI=1'
         - LIBCXX=libstdc++11
     - os: osx
