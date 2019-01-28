@@ -141,6 +141,8 @@ namespace clrs {
       indent.reserve(max_degree << 1);
       print(out, t, indent, true);
     }
+
+    friend void print(std::ostream& out, const binomial_heap& bh);
 #endif
 
   };
@@ -291,7 +293,7 @@ namespace clrs {
 
       this->absorb(std::move(x_prev));
     }
-    
+
 #ifndef NDEBUG
     friend void print(std::ostream& out, const binomial_heap& bh) {
       size_t max_degree = 0;
@@ -310,4 +312,3 @@ namespace clrs {
 }
 
 #endif
-
