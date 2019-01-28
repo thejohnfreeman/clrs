@@ -5,3 +5,5 @@ target_include_directories(clrs
     $<INSTALL_INTERFACE:include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 )
+# TODO: Try to pull dependency usage requirements through Conan.
+target_compile_features(clrs PUBLIC cxx_std_11)
