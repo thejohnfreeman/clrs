@@ -49,6 +49,7 @@ install:
   - sudo pip install --upgrade conan --ignore-installed
   - conan user
   - conan --version
+  - conan remote add autocheck https://api.bintray.com/conan/thejohnfreeman/autocheck
   - conan remote list
 
 script:
