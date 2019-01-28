@@ -142,8 +142,8 @@ namespace clrs {
       print(out, t, indent, true);
     }
 
-    template <typename Compare>
-    friend void print(std::ostream& out, const binomial_heap<T, Compare>& bh);
+    template <typename U, typename Compare>
+    friend void print(std::ostream& out, const binomial_heap<U, Compare>& bh);
 #endif
 
   };
