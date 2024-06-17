@@ -1,9 +1,10 @@
 #ifndef CLRS_19_XX_BINOMIAL_HEAP
 #define CLRS_19_XX_BINOMIAL_HEAP
 
-#include <functional>
 #include <cassert>
+#include <functional>
 #include <initializer_list>
+#include <memory>
 #ifndef NDEBUG
 #include <iostream>
 #endif

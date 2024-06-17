@@ -1,0 +1,110 @@
+{
+  "project": {
+    "name": "clrs",
+    "version": "1.0.0"
+  },
+  "libraries": [
+    {
+      "name": "clrs"
+    }
+  ],
+  "imports": [
+    {
+      "name": "autocheck",
+      "version": "1.0.1",
+      "reference": "autocheck/1.0.1",
+      "file": "autocheck",
+      "targets": [
+        "autocheck::libraries::autocheck"
+      ],
+      "groups": [
+        "test"
+      ]
+    },
+    {
+      "name": "gtest",
+      "version": "1.8.1",
+      "reference": "gtest/1.8.1",
+      "file": "GTest",
+      "targets": [
+        "GTest::gtest",
+        "GTest::gtest_main"
+      ],
+      "groups": [
+        "test"
+      ]
+    }
+  ],
+  "tests": [
+    {
+      "name": "02.01-insertion-sort",
+      "links": [
+        "${PROJECT_NAME}.library",
+        "${PROJECT_NAME}.imports.test"
+      ]
+    },
+    {
+      "name": "02.02-merge-sort",
+      "links": [
+        "${PROJECT_NAME}.library",
+        "${PROJECT_NAME}.imports.test"
+      ]
+    },
+    {
+      "name": "06.03-make-heap",
+      "links": [
+        "${PROJECT_NAME}.library",
+        "${PROJECT_NAME}.imports.test"
+      ]
+    },
+    {
+      "name": "06.04-heap-sort",
+      "links": [
+        "${PROJECT_NAME}.library",
+        "${PROJECT_NAME}.imports.test"
+      ]
+    },
+    {
+      "name": "06.05-priority-queue",
+      "links": [
+        "${PROJECT_NAME}.library",
+        "${PROJECT_NAME}.imports.test"
+      ]
+    },
+    {
+      "name": "07.01-partition",
+      "links": [
+        "${PROJECT_NAME}.library",
+        "${PROJECT_NAME}.imports.test"
+      ]
+    },
+    {
+      "name": "07.01-quick-sort",
+      "links": [
+        "${PROJECT_NAME}.library",
+        "${PROJECT_NAME}.imports.test"
+      ]
+    },
+    {
+      "name": "19.02-binomial-heap",
+      "links": [
+        "${PROJECT_NAME}.library",
+        "${PROJECT_NAME}.imports.test"
+      ]
+    },
+    {
+      "name": "ex-06.05-08-k-way-merge",
+      "links": [
+        "${PROJECT_NAME}.library",
+        "${PROJECT_NAME}.imports.test"
+      ]
+    },
+    {
+      "name": "intro-sort",
+      "links": [
+        "${PROJECT_NAME}.library",
+        "${PROJECT_NAME}.imports.test"
+      ]
+    }
+  ]
+}
