@@ -12,7 +12,7 @@
     {
       "name": "autocheck",
       "version": "1.0.1",
-      "reference": "autocheck/1.0.1",
+      "reference": "autocheck/1.0.1@github/thejohnfreeman",
       "file": "autocheck",
       "targets": [
         "autocheck::libraries::autocheck"
