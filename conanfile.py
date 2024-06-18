@@ -23,6 +23,9 @@ class Clrs(ConanFile):
         if self.version is None:
             self.version = self.metadata['project']['version']
 
+    user = 'github'
+    channel = 'thejohnfreeman'
+
     license = 'MIT'
     author = 'John Freeman <jfreeman08@gmail.com>'
     url = 'https://github.com/thejohnfreeman/clrs'
